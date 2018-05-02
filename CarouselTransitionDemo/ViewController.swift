@@ -18,7 +18,6 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     // Carousel properties
     private var scalingCarousel: ScalingCarouselView!
     var selectedCell = ScalingCarouselCell()
-    var currentProfile: Profile? = nil
     var carouselDatasource: [Profile] = []
     
     // Transition properties
@@ -37,11 +36,12 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         
         setupMap()
         
-        let profile = carouselDatasource[0] as Profile
-        let coords = CLLocationCoordinate2D(latitude: profile.latitude, longitude: profile.longitude)
-        let region = MKCoordinateRegionMakeWithDistance(coords, distanceInMeters, distanceInMeters)
-        self.mapView.setRegion(region, animated: false)
-        currentProfile = profile
+        if carouselDatasource.count > 0 {
+            let profile = carouselDatasource[0] as Profile
+            let coords = CLLocationCoordinate2D(latitude: profile.latitude, longitude: profile.longitude)
+            let region = MKCoordinateRegionMakeWithDistance(coords, distanceInMeters, distanceInMeters)
+            self.mapView.setRegion(region, animated: false)
+        }
     }
     
     
@@ -115,14 +115,9 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     private func setCurrentUser() {
         if let indexPath = scalingCarousel.currentCenterCellIndex {
             let selectedProfile = carouselDatasource[indexPath.row]
-            if var currentProfile = currentProfile {
-                if selectedProfile.name != currentProfile.name {
-                    currentProfile = selectedProfile
-                    let coords = CLLocationCoordinate2D(latitude: selectedProfile.latitude, longitude: selectedProfile.longitude)
-                    let region = MKCoordinateRegionMakeWithDistance(coords, distanceInMeters, distanceInMeters)
-                    self.mapView.setRegion(region, animated: true)
-                }
-            }
+            let coords = CLLocationCoordinate2D(latitude: selectedProfile.latitude, longitude: selectedProfile.longitude)
+            let region = MKCoordinateRegionMakeWithDistance(coords, distanceInMeters, distanceInMeters)
+            self.mapView.setRegion(region, animated: true)
         }
     }
     
